@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NordiCHI 2026 — My Conference</title>
+<style>
+:root{--bg:#f5f2eb;--card:#fff;--ink:#17211b;--muted:#69736d;--accent:#245b47;--soft:#dfe9e3;--mine:#f3dfb2}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:34px 22px 22px;max-width:920px;margin:auto} h1{margin:0;font-size:clamp(30px,6vw,54px);letter-spacing:-2px}
+header p{color:var(--muted);max-width:700px;line-height:1.5}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+button{font:inherit;border:0;border-radius:999px;padding:10px 16px;cursor:pointer;background:#e6e2da;color:var(--ink)}
+button.active{background:var(--accent);color:white}.wrap{max-width:920px;margin:auto;padding:0 22px 60px}
+.card{background:var(--card);border-radius:18px;padding:20px;margin:13px 0;box-shadow:0 3px 16px #0000000b;border-left:5px solid transparent}
+.card.star{border-left-color:var(--accent)}.card.mine{background:#fff8e8;border-left-color:#b27814}
+.time{font-weight:750}.place{color:var(--muted);margin-left:8px}.tag{display:inline-block;font-size:12px;font-weight:700;padding:4px 8px;border-radius:99px;background:var(--soft);margin-bottom:9px}
+.mine .tag{background:var(--mine)}h2{font-size:23px;margin:4px 0 9px}h3{font-size:16px;margin:13px 0 5px}
+p{line-height:1.45}.papers{color:#303a34}.why{background:#f2f6f3;padding:10px 12px;border-radius:10px}
+textarea{width:100%;min-height:72px;border:1px solid #d7d4cc;border-radius:10px;padding:10px;font:inherit;resize:vertical;background:#fff}
+.small{font-size:13px;color:var(--muted)}a{color:var(--accent)}footer{padding:20px 0;color:var(--muted);font-size:13px}
+
+.syncbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.syncbar button{border-radius:10px;background:#245b47;color:#fff}
+.syncbar button.secondary{background:#e6e2da;color:#17211b}
+#syncstatus{font-size:13px;color:var(--muted);align-self:center}
+input[type=file]{display:none}
+
+.tools{max-width:920px;margin:0 auto 18px;padding:0 22px}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.filters button{font-size:13px;padding:7px 11px}
+.filters button.on{background:#17211b;color:#fff}
+.fav{float:right;background:transparent!important;color:#8a8a82!important;padding:2px 6px!important;font-size:23px}
+.fav.on{color:#b27814!important}
+.addbox{background:#fff;border-radius:16px;padding:16px;margin:12px 0;display:none}
+.addbox input,.addbox select,.addbox textarea{width:100%;margin:5px 0 10px;border:1px solid #d7d4cc;border-radius:9px;padding:9px;font:inherit}
+.addbox textarea{min-height:55px}
+.addbox .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.custom{border-left-color:#76548c}
+.delete{background:#eee!important;color:#7a3030!important;font-size:12px;padding:6px 9px!important;border-radius:8px!important}
+.imgtools{display:flex;gap:8px;align-items:center;margin:12px 0;flex-wrap:wrap}.imgtools button{font-size:13px;padding:7px 10px;border-radius:9px}.imgpreview{display:block;max-width:100%;max-height:420px;object-fit:contain;border-radius:12px;margin:10px 0;border:1px solid #e3dfd7;background:#faf9f6}.imgcaption{font-size:12px;color:var(--muted);margin-top:-5px}</style>
+</head>
+<body>
+<header>
+<div class="tag">OFFLINE · MAC</div>
+<h1>NordiCHI 2026<br>My Conference</h1>
+<p>Ett personligt konferensspår med prioriterade sessioner, din Critique och lokala anteckningar. Anteckningarna sparas endast i den här webbläsaren på datorn.</p>
+<div class="tabs">
+<button class="active" data-day="mon">Måndag 5/10</button>
+<button data-day="tue">Tisdag 6/10</button>
+<button data-day="wed">Onsdag 7/10</button>
+</div>
+</header>
+<div class="wrap">
+<div class="syncbar">
+<button id="exportBtn">⬇ Exportera anteckningar</button>
+<button id="importBtn" class="secondary">⬆ Importera anteckningar</button>
+<input type="file" id="importFile" accept=".json,application/json">
+<span id="syncstatus">Lokalt sparat · exportera filen till samma Google Drive-mapp för backup/synk.</span>
+</div>
+</div>
+<div class="tools">
+<div class="filters">
+<button class="on" data-filter="all">Alla</button>
+<button data-filter="favorites">★ Favoriter</button>
+<button data-filter="ai">AI</button>
+<button data-filter="participation">Participation</button>
+<button data-filter="methods">Methods</button>
+<button data-filter="datafication">Datafication</button>
+<button data-filter="critique">Critique</button>
+<button id="addToggle">＋ Egen programpunkt</button>
+</div>
+<div class="addbox" id="addbox">
+<strong>Lägg till egen programpunkt</strong>
+<div class="row"><div><label>Dag</label><select id="cday"><option value="mon">Måndag</option><option value="tue">Tisdag</option><option value="wed">Onsdag</option></select></div><div><label>Tid</label><input id="ctime" placeholder="t.ex. 14:00–15:00"></div></div>
+<label>Plats</label><input id="cplace" placeholder="Rum / plats">
+<label>Titel</label><input id="ctitle" placeholder="Titel">
+<label>Beskrivning</label><textarea id="cdesc" placeholder="Paper, personer eller egen kommentar"></textarea>
+<label>Teman (kommaseparerade)</label><input id="ctags" placeholder="ai, methods, critique">
+<button id="saveCustom">Spara programpunkt</button>
+</div>
+</div>
+<main class="wrap" id="app"></main>
+<script>
+const data={
+mon:[
+["10:30–12:00","Levón A202 · 2nd floor","⭐","Opening + Yvonne Rogers keynote","Moving from Human-Centred AI to People-Centred AI — Yvonne Rogers","Från individen som user mot människor, organisationer och kollektiva praktiker."],
+["13:30–15:00","D124 · 1st floor","⭐","Taking Care of Ethics","“My Parents Are Monitoring Me”: LGBTQ+ Young People Navigating Social Media Privacy and Visibility Under Parental Surveillance — Nygren, Wallin, Haimson & Rossitto","Stark koppling till visibility/invisibility, surveillance och selective disclosure."],
+["15:30–17:00","Levón A202 · 2nd floor","⭐","Help for Learning","Dance for Data: Adopting Music Streaming as the Domain for Introducing Data Literacy in K-9 to Foster Computational Empowerment — Dybboe et al.","Critical data literacy, barn/unga, vardaglig datafiering och metod/design."],
+["18:30","Fontana Club","•","Welcome Reception","Hovioikeudenpuistikko 15","Bra tillfälle för samtal med forskare från kommande sessioner."]
+],
+tue:[
+["09:00–10:00","Levón A202 · 2nd floor","⭐","Mattia Thibault keynote","Interreal translation: travelling across realities in the Media Multiverse","Koppling till digital representation och hur människor översätts till digitala system."],
+["10:30–12:00","D124 · 1st floor","⭐","Critiques 1","Death of the Designer — Snow & Barry · Design Tropes of More Than Human Confusion — Fernaeus · Rhythm and Residue — Encinas et al. · Man, Machine, and Masterpiece — Jovanovska et al. · Feminist Fabulations for Reworlding Menopause Care — Mohammadi et al. · The implications of implications — Brown","VIKTIGT: samma chairs som din session. Studera 10 min presentation + 5 min diskussion och hur critique-formatet faktiskt görs."],
+["12:00–13:00","Mathilda Lobby","⭐","Poster session 2","Off Our Streets: Forms of Refusal as Counter-Participation… — Dobrosovestnova, Bailey & Rattay · Un/making Dominant Data Imaginaries through Food — Karyda, Çay & Tölgyesi","Refusal, counter-participation och data imaginaries ligger nära workshopens frågor."],
+["13:30–15:00","Levón A202 · 2nd floor","⭐","Design Methods 1","Participatory Design for Everyday Autonomy in Digitalized Environments — Bratteteig, Joshi & Maartmann-Moe · Acquiring Facilitation Competence in Participatory Design — van den Biggelaar et al. · From Assistance to Autonomy — Kirsten et al. · AI as the New Paint — Zhou, Koch & Casiez","Förmodligen konferensens mest relevanta forskningssession för dina metodintressen."],
+["15:30–17:00","Kurtén C203 · 2nd floor","⭐","Psychological Experiences","Existential Probes: A Method to Elicit Existential Concerns in HCI — Papenfuß, Wolf, Kutter & Hurtienne","Metodologiskt intressant i relation till promenader, personas, probes och alternativa deltagarmetoder."]
+],
+wed:[
+["09:00–10:00","Levón A202 · 2nd floor","⭐","Design Methods 2","Designing for Robustness and Fragility: A Field Evaluation of an Urban Mobility Co-Design Canvas — Gebremichael, Chandio & Knutas","Fortsatt metodspår inför dagens Critique."],
+["10:30–12:00","D124 · 1st floor","⭐","Save the Planet","Reconceptualizing the Persona Perception Scale for Non-Human Personas — Salminen et al. · Mediating More-Than-Human Encounters Across Spatio-Temporal Distance — Binyamini Ben-Meir et al. · Designing Technology for Joyful and Caring Human-Forest Interactions — Altarriba Bertran et al.","Särskilt relevant efter workshopen med smurfar/personas och för more-than-human perspektiv."],
+["12:00–13:00","Mathilda Lobby","⭐","Poster session 3","Granularity as Analytical Cut — Lu · A Compositional Design Perspective — Göbel · AI and Indigenous lifeworlds — Prince et al. · The Secret Keeper: Parenting, Smart Toys, and Surveillance Capitalism — Håkansson et al. · Participatory Mapping For Sustainable Futures — Muashekele et al.","Använd sessionen aktivt för samtal. Lämna i god tid inför din presentation."],
+["13:10","D124 · 1st floor","🎤","Var i rummet","Träffa chairs och testa tekniken.","Konferensens riktlinje: presentatörer ska vara på plats 20 minuter före sessionen."],
+["13:30–15:00","D124 · 1st floor","🎤","MY PRESENTATION · Critiques 3","Before I Am Asked Again: On Passing as Human In Digital Systems — Pernilla Josefsson, Karin Hansson, Francis Lee & Daniel Bodén","Din Critique. Chairs: Marta Kristín Lárusdóttir, Johanna Ylipulli & Maria Normark."],
+["15:30–17:00","Levón A202 · 2nd floor","⭐","Pontus Wärnestål keynote + closing","AI, Responsibility, and Better Decisions in an Age of Hype","Bra avslutning: ansvar, maktrelationer och AI bortom hype."]
+]};
+let day="mon", filter="all";
+const tagRules={
+ ai:/\bAI\b|artificial|machine|algorithm|digital/i,
+ participation:/particip|co-design|facilitat|autonomy|refusal/i,
+ methods:/method|probe|design methods|mapping|canvas|autoethn/i,
+ datafication:/data|surveillance|tracking|privacy|visibility|legib/i,
+ critique:/critique|illusion|posthuman|corporeal|optimiz/i
+};
+function favorites(){try{return JSON.parse(localStorage.getItem("nordichi-favorites")||"{}")}catch{return {}}}
+function customs(){try{return JSON.parse(localStorage.getItem("nordichi-custom")||"[]")}catch{return []}}
+function itemTags(x){let s=x.join(" "); return Object.keys(tagRules).filter(k=>tagRules[k].test(s));}
+function render(){
+ const app=document.getElementById("app"); app.innerHTML="";
+ const favs=favorites();
+ const base=data[day].map((x,i)=>({x,i,key:`nordichi-${day}-${i}`,custom:false}));
+ const extra=customs().filter(c=>c.day===day).map(c=>({x:[c.time,c.place,"＋",c.title,c.desc,"Egen programpunkt"],i:c.id,key:`nordichi-custom-note-${c.id}`,custom:true,tags:c.tags||[]}));
+ [...base,...extra].forEach(o=>{
+  const x=o.x, mine=x[2]=="🎤", star=x[2]=="⭐", isfav=!!favs[o.key];
+  const tags=o.custom?o.tags:itemTags(x);
+  if(filter==="favorites"&&!isfav)return;
+  if(!["all","favorites"].includes(filter)&&!tags.includes(filter))return;
+  const el=document.createElement("section"); el.className="card "+(o.custom?"custom":mine?"mine":star?"star":"");
+  el.innerHTML=`<button class="fav ${isfav?"on":""}" data-fav="${o.key}" title="Favorit">★</button>
+  <div class="tag">${o.custom?"＋ EGEN":x[2]+" "+(mine?"DIN PUNKT":star?"PRIORITERAD":"PROGRAM")}</div>
+  <div><span class="time">${x[0]}</span><span class="place">${x[1]}</span></div>
+  <h2>${x[3]}</h2><div class="papers">${x[4]}</div>
+  ${o.custom?"":`<p class="why"><strong>Varför:</strong> ${x[5]}</p>`}
+  <div class="small">${tags.map(t=>"#"+t).join(" ")}</div>
+  <div class="imgtools"><button class="secondary addimg" data-img="${o.key}">🖼 Lägg till bild</button>${localStorage.getItem(o.key+"-image") ? `<button class="secondary removeimg" data-img="${o.key}">Ta bort bild</button>` : ""}<input type="file" accept="image/*" class="imgfile" data-img="${o.key}" style="display:none"></div>${localStorage.getItem(o.key+"-image") ? `<img class="imgpreview" src="${localStorage.getItem(o.key+"-image")}" alt="Egen bild"><div class="imgcaption">Egen bild sparad lokalt.</div>` : ""}<h3>Mina anteckningar</h3><textarea data-key="${o.key}" placeholder="Skriv här…">${localStorage.getItem(o.key)||""}</textarea>
+  ${o.custom?`<p><button class="delete" data-del="${o.i}">Ta bort egen punkt</button></p>`:""}`;
+  app.appendChild(el);
+ });
+ document.querySelectorAll("textarea[data-key]").forEach(t=>t.oninput=()=>localStorage.setItem(t.dataset.key,t.value));
+ document.querySelectorAll(".addimg").forEach(b=>b.onclick=()=>{const f=document.querySelector(`.imgfile[data-img="${b.dataset.img}"]`);if(f)f.click();});
+ document.querySelectorAll(".imgfile").forEach(inp=>inp.onchange=()=>{const file=inp.files&&inp.files[0];if(!file)return;if(file.size>4*1024*1024){alert("Välj gärna en bild under 4 MB.");return;}const reader=new FileReader();reader.onload=()=>{try{localStorage.setItem(inp.dataset.img+"-image",reader.result);render();}catch(e){alert("Lagringen är full. Prova en mindre bild.");}};reader.readAsDataURL(file);});
+ document.querySelectorAll(".removeimg").forEach(b=>b.onclick=()=>{localStorage.removeItem(b.dataset.img+"-image");render();});
+ document.querySelectorAll("[data-fav]").forEach(b=>b.onclick=()=>{
+   let f=favorites(); f[b.dataset.fav]=!f[b.dataset.fav]; localStorage.setItem("nordichi-favorites",JSON.stringify(f)); render();
+ });
+ document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
+   let c=customs().filter(x=>String(x.id)!==String(b.dataset.del)); localStorage.setItem("nordichi-custom",JSON.stringify(c)); render();
+ });
+ app.insertAdjacentHTML("beforeend",`<footer>V4 · Offline · Personliga val sparas lokalt och kan exporteras till Drive. <a href="https://dl.acm.org/doi/proceedings/10.1145/3821402" target="_blank">ACM Proceedings</a></footer>`);
+}
+document.querySelectorAll("button[data-day]").forEach(b=>b.onclick=()=>{
+ day=b.dataset.day; document.querySelectorAll("button[data-day]").forEach(x=>x.classList.remove("active")); b.classList.add("active"); render();
+});
+document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{
+ filter=b.dataset.filter; document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("on")); b.classList.add("on"); render();
+});
+document.getElementById("addToggle").onclick=()=>{let a=document.getElementById("addbox");a.style.display=a.style.display==="block"?"none":"block"};
+document.getElementById("saveCustom").onclick=()=>{
+ const c={id:Date.now(),day:document.getElementById("cday").value,time:document.getElementById("ctime").value||"—",place:document.getElementById("cplace").value||"—",title:document.getElementById("ctitle").value||"Egen programpunkt",desc:document.getElementById("cdesc").value||"",tags:document.getElementById("ctags").value.toLowerCase().split(",").map(x=>x.trim()).filter(Boolean)};
+ let cs=customs();cs.push(c);localStorage.setItem("nordichi-custom",JSON.stringify(cs));
+ day=c.day; document.querySelectorAll("button[data-day]").forEach(x=>x.classList.toggle("active",x.dataset.day===day));
+ document.getElementById("addbox").style.display="none"; render();
+};
+function collectNotes(){
+ const notes={};
+ Object.keys(localStorage).filter(k=>k.startsWith("nordichi-") && !["nordichi-favorites","nordichi-custom"].includes(k)).sort().forEach(k=>notes[k]=localStorage.getItem(k));
+ return {app:"NordiCHI 2026 My Conference",version:4,exportedAt:new Date().toISOString(),notes,favorites:favorites(),custom:customs()};
+}
+document.getElementById("exportBtn").onclick=()=>{
+ const blob=new Blob([JSON.stringify(collectNotes(),null,2)],{type:"application/json"});
+ const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+ a.download="NordiCHI-anteckningar.json"; a.click(); URL.revokeObjectURL(a.href);
+ document.getElementById("syncstatus").textContent="Anteckningar exporterade. Flytta/spara filen i NordiCHI-mappen på Google Drive.";
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=async(e)=>{
+ const f=e.target.files[0]; if(!f)return;
+ try{
+   const obj=JSON.parse(await f.text());
+   if(!obj.notes || typeof obj.notes!=="object") throw new Error("Ogiltig fil");
+   Object.entries(obj.notes).forEach(([k,v])=>{ if(k.startsWith("nordichi-")) localStorage.setItem(k,String(v??"")); });
+   if(obj.favorites) localStorage.setItem("nordichi-favorites",JSON.stringify(obj.favorites));
+   if(obj.custom) localStorage.setItem("nordichi-custom",JSON.stringify(obj.custom));
+   document.getElementById("syncstatus").textContent="Anteckningar importerade från "+f.name+".";
+   render();
+ }catch(err){ alert("Kunde inte importera filen. Välj en anteckningsfil exporterad från NordiCHI-appen."); }
+ e.target.value="";
+};
+
+render();
+</script>
+</body></html>
